@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <main style="max-width: 600px; margin: 40px auto;">
+        <h3> If you can't find the email, check your spam!</h3>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <input id="emailInput" type="email" placeholder="Enter email"
+                style="width: 500px; border: 1px solid black; padding: 0px 10px; height: 40px; border-radius: 4px;">
+            <button id="sendButton"
+                style="height: 40px; width: 140px; cursor: pointer; white-space: nowrap; padding: 0 5px;">Send
+                post</button>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById("sendButton").addEventListener("click", function () {
+            const userEmail = document.getElementById("emailInput").value;
+            console.log(userEmail);
+            if (!validateEmail(userEmail)) {
+                alert("Please enter a valid email address.");
+                return;
+            }
+
+            fetch(`http://localhost:5000/api/invitation`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ userEmail }),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    alert("Post sent successfully!");
+                })
+                .catch(error => {
+                    console.error("There was a problem sending the post:", error);
+                    alert("Failed to send post. Please try again later.");
+                });
+        });
+
+        function validateEmail(email) {
+            const re = /\S+@\S+\.\S+/;
+            return re.test(email);
+        }
+    </script>
+</body>
+
+</html>
